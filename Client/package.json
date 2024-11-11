@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "vite preview --port 8000",
+    "start": "vite preview --port 8000 --host",
     "preview": "vite preview"
   },
   "dependencies": {
