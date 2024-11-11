@@ -1,1 +1,1 @@
-web: ./Server/main
+web: cd Server && ./main
