@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 
-export function RealtimeDate() {
+export function RealTimeDate() {
   const [waktuSekarang, setWaktuSekarang] = useState(new Date());
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function RealtimeDate() {
   return tanggal;
 }
 
-export function RealtimeClock() {
+export function RealTimeClock() {
   const [waktuSekarang, setWaktuSekarang] = useState(new Date());
 
   useEffect(() => {

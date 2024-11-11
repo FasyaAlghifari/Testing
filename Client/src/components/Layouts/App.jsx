@@ -14,7 +14,7 @@ import {
   deleteNotification,
   connectWebSocket,
 } from "../../../API/KegiatanProses/Notification/Notification";
-import { RealtimeClock, RealtimeDate } from "../../Utilities/RealTimeClock";
+import { RealTimeClock, RealTimeDate } from "../../Utilities/RealtimeClock";
 import { format } from "date-fns";
 import idLocale from "date-fns/locale/id";
 import Swal from "sweetalert2";
@@ -329,10 +329,10 @@ const App = ({ services, children }) => {
           </div>
           <div className="flex items-center gap-4 m-2">
             <Label className="truncate text-sm font-medium ring-2 p-1.5 rounded bg-slate-50">
-              {RealtimeClock()}
+              {RealTimeClock()}
             </Label>
             <Label className="truncate text-sm font-medium ring-2 p-1.5 rounded bg-slate-50">
-              {RealtimeDate()}
+              {RealTimeDate()}
             </Label>
             <Dropdown
               arrowIcon={false}
