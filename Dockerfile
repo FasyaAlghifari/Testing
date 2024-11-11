@@ -8,8 +8,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main
 # Build React frontend
 FROM node:18-alpine AS frontend-builder
 WORKDIR /app
-COPY Client/ .
+COPY Client/package*.json ./
 RUN npm install
+COPY Client/ .
+COPY Client/.env.production .env.production
 RUN npm run build
 
 # Final stage

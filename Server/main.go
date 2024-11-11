@@ -265,7 +265,10 @@ func main() {
 	// r.PUT("/request/:id", controllers.RequestUpdate)
 	// r.DELETE("/request/:id", controllers.RequestDelete)
 
-	r.Static("/", "../Client/dist")
+	r.Static("/", "./dist")
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./dist/index.html")
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
