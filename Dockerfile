@@ -20,6 +20,8 @@ WORKDIR /app
 COPY --from=server-build /app/main /app/main
 COPY --from=client-build /app/dist /app/dist
 
+CMD ["npm", "start"]
+
 # Set environment variables
 ENV PORT=8080
 
