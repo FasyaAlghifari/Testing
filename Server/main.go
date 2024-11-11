@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"project-its/controllers"
 	"project-its/initializers"
 	"project-its/middleware"
@@ -264,5 +265,10 @@ func main() {
 	// r.PUT("/request/:id", controllers.RequestUpdate)
 	// r.DELETE("/request/:id", controllers.RequestDelete)
 
-	r.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default port if not set
+	}
+	r.Run(":" + port)
+	
 }
