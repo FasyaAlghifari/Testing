@@ -6,9 +6,9 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "cd Server && CGO_ENABLED=0 GOOS=linux go build -o ../out",
+    "cd Server && CGO_ENABLED=0 GOOS=linux go build -o ../app",
     "cd ../Client && npm run build"
 ]
 
 [start]
-cmd = "./out"
+cmd = "./app"

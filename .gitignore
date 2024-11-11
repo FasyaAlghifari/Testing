@@ -1,0 +1,5 @@
+app
+project-its.exe
+project-its.exe~
+node_modules
+.env
