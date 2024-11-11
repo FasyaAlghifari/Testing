@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"project-its/controllers"
 	"project-its/initializers"
 	"project-its/middleware"
@@ -26,13 +25,13 @@ func main() {
 
 	// Enable CORS
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8000 || cangcut-production.up.railway.app"},
+		AllowOrigins:     []string{"http://localhost:8000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "http://localhost:8000 || cangcut-production.up.railway.app"
+			return origin == "http://localhost:8000"
 		},
 		MaxAge: 12 * time.Hour,
 	}))
@@ -265,10 +264,5 @@ func main() {
 	// r.PUT("/request/:id", controllers.RequestUpdate)
 	// r.DELETE("/request/:id", controllers.RequestDelete)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // Default port if not set
-	}
-	r.Run(":" + port)
-
+	r.Run()
 }
