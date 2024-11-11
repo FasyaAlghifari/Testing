@@ -1,3 +1,3 @@
 setup = "cd Server && go mod download && cd ../Client && npm install"
 build = "cd Server && go build -o main && cd ../Client && npm run build"
-start = "cd Server && ./main"
+start = "./Server/main"
