@@ -27,6 +27,7 @@ type SKRequest struct {
 	Perihal  *string `json:"perihal"`
 	Pic      *string `json:"pic"`
 	CreateBy string  `json:"create_by"`
+	Version  uint    `gorm:"default:1"`
 }
 
 func UploadHandlerSk(c *gin.Context) {
@@ -298,6 +299,14 @@ func SkUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != sk.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	// Proses tanggal jika diberikan dan tidak kosong
 	if requestBody.Tanggal != nil && *requestBody.Tanggal != "" {
 		parsedTanggal, err := time.Parse("2006-01-02", *requestBody.Tanggal)
@@ -336,6 +345,8 @@ func SkUpdate(c *gin.Context) {
 	if requestBody.Pic != nil {
 		sk.Pic = requestBody.Pic
 	}
+
+	sk.Version ++
 
 	// Simpan perubahan
 	if err := initializers.DB.Save(&sk).Error; err != nil {

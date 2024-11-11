@@ -34,7 +34,7 @@ type Memo struct {
 	Perihal   *string    `json:"perihal"`
 	Pic       *string    `json:"pic"`
 	Version   uint       `gorm:"default:1"` // Kolom untuk optimistic locking
-	CreateBy  string `json:"create_by"`
+	CreateBy  string     `json:"create_by"`
 }
 
 // MarshalJSON menyesuaikan serialisasi JSON untuk struct Memo
@@ -68,6 +68,7 @@ type BeritaAcara struct {
 	Tanggal   *time.Time `json:"tanggal"`
 	Perihal   *string    `json:"perihal"`
 	Pic       *string    `json:"pic"`
+	Version   uint       `gorm:"default:1"`
 	CreateBy  string     `json:"create_by"`
 }
 
@@ -101,6 +102,7 @@ type Surat struct {
 	Tanggal   *time.Time `json:"tanggal"`
 	Perihal   *string    `json:"perihal"`
 	Pic       *string    `json:"pic"`
+	Version   uint       `gorm:"default:1"`
 	CreateBy  string     `json:"create_by"`
 }
 
@@ -134,6 +136,7 @@ type Sk struct {
 	Tanggal   *time.Time `json:"tanggal"`
 	Perihal   *string    `json:"perihal"`
 	Pic       *string    `json:"pic"`
+	Version   uint       `gorm:"default:1"`
 	CreateBy  string     `json:"create_by"`
 }
 
@@ -174,6 +177,7 @@ type MeetingSchedule struct {
 	Status    *string    `json:"status"`
 	CreateBy  string     `json:"create_by"`
 	Color     string     `json:"color"`
+	Version   uint       `gorm:"default:1"`
 }
 
 func (i *MeetingSchedule) MarshalJSON() ([]byte, error) {
@@ -201,6 +205,7 @@ type Meeting struct {
 	TanggalTarget    *time.Time `json:"tanggal_target"`
 	TanggalActual    *time.Time `json:"tanggal_actual"`
 	CreateBy         string     `json:"create_by"`
+	Version          uint       `gorm:"default:1"`
 }
 
 func (i *Meeting) MarshalJSON() ([]byte, error) {
@@ -228,6 +233,7 @@ type Perdin struct {
 	Hotel     *string    `json:"hotel"`
 	Transport *string    `json:"transport"`
 	CreateBy  string     `json:"create_by"`
+	Version   uint       `gorm:"default:1"`
 }
 
 func (i *Perdin) MarshalJSON() ([]byte, error) {
@@ -273,6 +279,7 @@ type Project struct {
 	BudgetType      *string    `json:"budget_type"`
 	Type            *string    `json:"type"`
 	CreateBy        string     `json:"create_by"`
+	Version         uint       `gorm:"default:1"`
 }
 
 func (p *Project) MarshalJSON() ([]byte, error) {
@@ -406,6 +413,7 @@ type SuratMasuk struct {
 	DestinyDiv *string    `json:"destiny_div"`
 	Tanggal    *time.Time `json:"tanggal"`
 	CreateBy   string     `json:"create_by"`
+	Version    uint       `gorm:"default:1"`
 }
 
 func (i *SuratMasuk) MarshalJSON() ([]byte, error) {
@@ -442,16 +450,26 @@ type SuratKeluar struct {
 	Pic       *string    `json:"pic"`
 	Tanggal   *time.Time `json:"tanggal"`
 	CreateBy  string     `json:"create_by"`
+	Version   uint       `gorm:"default:1"`
 }
 
 func (i *SuratKeluar) MarshalJSON() ([]byte, error) {
 	type Alias SuratKeluar
+	if i.Tanggal == nil {
+		return json.Marshal(&struct {
+			Tanggal string `json:"tanggal"`
+			*Alias
+		}{
+			Tanggal: "", // Atau format default yang Anda inginkan jika tanggal tidak ada
+			Alias:    (*Alias)(i),
+		})
+	}
 	tanggalFormatted := i.Tanggal.Format("2006-01-02")
 	return json.Marshal(&struct {
-		Tanggal *string `json:"tanggal"`
+		Tanggal string `json:"tanggal"`
 		*Alias
 	}{
-		Tanggal: &tanggalFormatted,
+		Tanggal: tanggalFormatted,
 		Alias:   (*Alias)(i),
 	})
 }
@@ -467,6 +485,7 @@ type Arsip struct {
 	TanggalPenyerahan *time.Time `json:"tanggal_penyerahan"`
 	Keterangan        *string    `json:"keterangan"`
 	CreateBy          string     `json:"create_by"`
+	Version           uint       `gorm:"default:1"`
 }
 
 func (a *Arsip) MarshalJSON() ([]byte, error) {

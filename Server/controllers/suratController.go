@@ -27,6 +27,7 @@ type SuratRequest struct {
 	Perihal  *string `json:"perihal"`
 	Pic      *string `json:"pic"`
 	CreateBy string  `json:"create_by"`
+	Version  uint    `gorm:"default:1"`
 }
 
 func UploadHandlerSurat(c *gin.Context) {
@@ -297,6 +298,14 @@ func SuratUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != surat.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	nomor, err := GetLatestSuratNumber(*requestBody.NoSurat)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get latest memo number"})
@@ -343,6 +352,8 @@ func SuratUpdate(c *gin.Context) {
 	if requestBody.Pic != nil {
 		surat.Pic = requestBody.Pic
 	}
+
+	surat.Version ++
 
 	// Simpan perubahan
 	if err := initializers.DB.Save(&surat).Error; err != nil {

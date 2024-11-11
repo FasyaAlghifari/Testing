@@ -28,6 +28,7 @@ type arsipRequest struct {
 	TanggalPenyerahan *string `json:"tanggal_penyerahan"`
 	Keterangan        *string `json:"keterangan"`
 	CreateBy          string  `json:"create_by"`
+	Version           uint    `gorm:"default:1"`
 }
 
 func UploadHandlerArsip(c *gin.Context) {
@@ -226,6 +227,14 @@ func ArsipUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != arsip.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	if requestBody.TanggalDokumen != nil {
 		tanggal, err := time.Parse("2006-01-02", *requestBody.TanggalDokumen)
 		if err != nil {
@@ -257,6 +266,8 @@ func ArsipUpdate(c *gin.Context) {
 	if requestBody.CreateBy != "" {
 		arsip.CreateBy = requestBody.CreateBy
 	}
+
+	arsip.Version ++
 
 	if err := initializers.DB.Save(&arsip).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update arsip"})

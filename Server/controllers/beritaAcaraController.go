@@ -26,6 +26,7 @@ type BcRequest struct {
 	NoSurat  *string `json:"no_surat"`
 	Perihal  *string `json:"perihal"`
 	Pic      *string `json:"pic"`
+	Version  uint    `gorm:"default:1"`
 	CreateBy string  `json:"create_by"`
 }
 
@@ -277,6 +278,14 @@ func BeritaAcaraUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != bc.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	nomor, err := GetLatestBeritaAcaraNumber(*requestBody.NoSurat)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get latest Berita Acara number"})
@@ -316,6 +325,8 @@ func BeritaAcaraUpdate(c *gin.Context) {
 	} else {
 		bc.CreateBy = bc.CreateBy
 	}
+
+	bc.Version ++
 
 	initializers.DB.Save(&bc)
 

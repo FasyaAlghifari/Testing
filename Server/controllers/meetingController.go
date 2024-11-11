@@ -27,6 +27,7 @@ type MeetingRequest struct {
 	TanggalTarget    *string `json:"tanggal_target"`
 	TanggalActual    *string `json:"tanggal_actual"`
 	CreateBy         string  `json:"create_by"`
+	Version          uint    `gorm:"default:1"`
 }
 
 func UploadHandlerMeeting(c *gin.Context) {
@@ -256,6 +257,14 @@ func MeetingUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != meeting.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	requestBody.CreateBy = c.MustGet("username").(string)
 	meeting.CreateBy = requestBody.CreateBy
 
@@ -306,6 +315,8 @@ func MeetingUpdate(c *gin.Context) {
 	} else {
 		meeting.Pic = meeting.Pic
 	}
+
+	meeting.Version ++
 
 	initializers.DB.Save(&meeting)
 

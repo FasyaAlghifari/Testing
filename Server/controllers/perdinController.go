@@ -27,6 +27,7 @@ type perdinRequest struct {
 	Hotel     *string `json:"hotel"`
 	Transport *string `json:"transport"`
 	CreateBy  string  `json:"create_by"`
+	Version   uint    `gorm:"default:1"`
 }
 
 func UploadHandlerPerdin(c *gin.Context) {
@@ -280,6 +281,14 @@ func PerdinUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != perdin.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	requestBody.CreateBy = c.MustGet("username").(string)
 	perdin.CreateBy = requestBody.CreateBy
 
@@ -336,6 +345,8 @@ func PerdinUpdate(c *gin.Context) {
 	} else {
 		perdin.CreateBy = perdin.CreateBy // gunakan nilai yang ada dari database
 	}
+
+	perdin.Version ++
 
 	initializers.DB.Model(&perdin).Updates(perdin)
 

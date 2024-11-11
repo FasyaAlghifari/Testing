@@ -30,6 +30,7 @@ type MeetingListRequest struct {
 	CreateBy string  `json:"create_by"`
 	Info     string  `json:"info"`
 	Color    string  `json:"color"`
+	Version  uint    `gorm:"default:1"`
 }
 
 func UploadHandlerMeetingList(c *gin.Context) {
@@ -256,6 +257,14 @@ func MeetingListUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != meetingList.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	requestBody.CreateBy = c.MustGet("username").(string)
 	meetingList.CreateBy = requestBody.CreateBy
 
@@ -316,6 +325,8 @@ func MeetingListUpdate(c *gin.Context) {
 	} else {
 		meetingList.Color = meetingList.Color
 	}
+
+	meetingList.Version ++
 
 	initializers.DB.Save(&meetingList)
 

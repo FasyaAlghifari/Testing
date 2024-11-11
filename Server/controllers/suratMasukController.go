@@ -25,6 +25,7 @@ type SuratMasukRequest struct {
 	DestinyDiv *string `json:"destiny_div"`
 	Tanggal    *string `json:"tanggal"`
 	CreateBy   string  `json:"create_by"`
+	Version    uint    `gorm:"default:1"`
 }
 
 func UploadHandlerSuratMasuk(c *gin.Context) {
@@ -247,6 +248,14 @@ func SuratMasukUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != surat_masuk.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	requestBody.CreateBy = c.MustGet("username").(string)
 	surat_masuk.CreateBy = requestBody.CreateBy
 
@@ -288,6 +297,8 @@ func SuratMasukUpdate(c *gin.Context) {
 	} else {
 		surat_masuk.CreateBy = surat_masuk.CreateBy // gunakan nilai yang ada dari database
 	}
+
+	surat_masuk.Version ++
 
 	initializers.DB.Model(&surat_masuk).Updates(surat_masuk)
 

@@ -37,6 +37,7 @@ type ProjectRequest struct {
 	InfraType       *string `json:"infra_type"`
 	BudgetType      *string `json:"budget_type"`
 	Type            *string `json:"type"`
+	Version         uint    `gorm:"default:1"`
 }
 
 func UploadHandlerProject(c *gin.Context) {
@@ -310,6 +311,14 @@ func ProjectUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != project.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	// Update KodeProject if Group or other relevant fields are changed
 	currentYear := time.Now().Format("2006")
 	var group, infraType, budgetType, projectType string
@@ -398,6 +407,8 @@ func ProjectUpdate(c *gin.Context) {
 		project.Pic = requestBody.Pic
 	}
 	project.CreateBy = c.MustGet("username").(string)
+
+	project.Version ++
 
 	// Save changes
 	if err := initializers.DB.Save(&project).Error; err != nil {

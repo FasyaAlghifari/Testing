@@ -25,6 +25,7 @@ type SuratKeluarRequest struct {
 	Pic      *string `json:"pic"`
 	Tanggal  *string `json:"tanggal"`
 	CreateBy string  `json:"create_by"`
+	Version  uint    `gorm:"default:1"`
 }
 
 func UploadHandlerSuratKeluar(c *gin.Context) {
@@ -248,6 +249,14 @@ func SuratKeluarUpdate(c *gin.Context) {
 		return
 	}
 
+	// Cek apakah versi yang diberikan cocok dengan versi di database
+	if requestBody.Version != surat_keluar.Version {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Conflict: Data has been modified by another user",
+		})
+		return
+	}
+
 	requestBody.CreateBy = c.MustGet("username").(string)
 	surat_keluar.CreateBy = requestBody.CreateBy
 
@@ -283,6 +292,8 @@ func SuratKeluarUpdate(c *gin.Context) {
 	} else {
 		surat_keluar.CreateBy = surat_keluar.CreateBy // gunakan nilai yang ada dari database
 	}
+
+	surat_keluar.Version ++
 
 	initializers.DB.Model(&surat_keluar).Updates(surat_keluar)
 
