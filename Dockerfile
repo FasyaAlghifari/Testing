@@ -1,5 +1,5 @@
 # Build Go backend
-FROM golang:1.20-alpine AS server-build
+FROM golang:1.22.5-alpine AS server-build
 WORKDIR /app
 COPY Server/ .
 RUN go mod download
