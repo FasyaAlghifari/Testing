@@ -1,5 +1,5 @@
 # Build Go backend
-FROM golang:1.22.5-alpine AS backend-builder
+FROM golang:1.20-alpine AS backend-builder
 WORKDIR /app
 COPY Server/ .
 RUN go mod download
@@ -11,7 +11,6 @@ WORKDIR /app
 COPY Client/package*.json ./
 RUN npm install
 COPY Client/ .
-COPY Client/.env.production .env.production
 RUN npm run build
 
 # Final stage
