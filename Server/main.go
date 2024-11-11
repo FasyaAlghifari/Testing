@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"project-its/controllers"
 	"project-its/initializers"
 	"project-its/middleware"
@@ -265,16 +264,5 @@ func main() {
 	// r.PUT("/request/:id", controllers.RequestUpdate)
 	// r.DELETE("/request/:id", controllers.RequestDelete)
 
-	r.Static("/", "./dist")
-	r.NoRoute(func(c *gin.Context) {
-		c.File("./dist/index.html")
-	})
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // default port
-	}
-
-	r.Run(":" + port)
-
+	r.Run()
 }

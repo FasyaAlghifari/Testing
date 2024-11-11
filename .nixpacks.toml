@@ -1,5 +1,0 @@
-[phases.setup]
-cmds = ["docker build -t app ."]
-
-[start]
-cmd = "docker run -p 8080:8080 app"
