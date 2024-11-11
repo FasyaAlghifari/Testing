@@ -1,0 +1,12 @@
+[phases]
+setup = "cd Server && go mod download && cd ../Client && npm install"
+build = "cd Server && go build -o main && cd ../Client && npm run build"
+start = "cd Server && ./main"
+
+[services]
+
+[services.server]
+command = "cd Server && go run main.go"
+
+[services.client]
+command = "cd Client && npm start"
