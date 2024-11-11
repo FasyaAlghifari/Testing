@@ -1,37 +1,27 @@
-# Menggunakan image untuk backend Golang
-FROM golang:1.22.5 AS server-build
-
-# Set working directory khusus untuk backend
-WORKDIR /app/Server
-
-# Copy hanya folder Server dan build backend
-COPY Server/ /app/Server
+# Build Go backend
+FROM golang:1.20-alpine AS server-build
+WORKDIR /app
+COPY Server/ .
 RUN go mod download
-RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
-# Menggunakan image untuk frontend Node.js
-FROM node:18 AS client-build
-
-# Set working directory khusus untuk frontend
-WORKDIR /app/Client
-
-# Copy hanya folder Client dan install dependencies
-COPY Client/ /app/Client
+# Build React frontend
+FROM node:18-alpine AS client-build
+WORKDIR /app
+COPY Client/package*.json ./
 RUN npm install
+COPY Client/ .
 RUN npm run build
 
-# Menggunakan image untuk menjalankan aplikasi
-FROM golang:1.20
-
-# Copy binary backend dan hasil build frontend
-COPY --from=server-build /app/Server/main /app/main
-COPY --from=client-build /app/Client/build /app/Client/build
-
-# Set working directory untuk aplikasi
+# Final stage
+FROM alpine:latest
 WORKDIR /app
+# Copy binary backend dan hasil build frontend
+COPY --from=server-build /app/main /app/main
+COPY --from=client-build /app/dist /app/dist
 
-# Ekspos port 8080 (atau port backend yang Anda gunakan)
+# Set environment variables
+ENV PORT=8080
+
 EXPOSE 8080
-
-# Jalankan aplikasi
 CMD ["./main"]
