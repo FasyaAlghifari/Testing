@@ -1,14 +1,5 @@
 [phases.setup]
-cmds = [
-    "cd Server && go mod download",
-    "cd ../Client && npm install"
-]
-
-[phases.build]
-cmds = [
-    "cd Server && CGO_ENABLED=0 GOOS=linux go build -o ../app",
-    "cd ../Client && npm run build"
-]
+cmds = ["docker build -t app ."]
 
 [start]
-cmd = "./app"
+cmd = "docker run -p 8080:8080 app"

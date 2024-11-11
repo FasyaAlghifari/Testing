@@ -265,8 +265,13 @@ func main() {
 	// r.PUT("/request/:id", controllers.RequestUpdate)
 	// r.DELETE("/request/:id", controllers.RequestDelete)
 
+	r.Static("/", "../Client/dist")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // default port
 	}
+
+	r.Run(":" + port)
+
 }
