@@ -1,5 +1,11 @@
-[build]
-cmd = "cd Server && go build -o main && cd ../Client && npm install && npm run build"
+[phases.setup]
+nixPkgs = ['go', 'nodejs', 'npm']
+
+[phases.build]
+cmds = [
+  'cd Server && go build -o main',
+  'cd ../Client && npm install && npm run build'
+]
 
 [start]
-cmd = "cd Server && ./main & cd ../Client && npm start"
+cmd = 'cd Server && ./main'
