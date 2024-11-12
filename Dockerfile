@@ -7,7 +7,7 @@ COPY ./Client/ ./
 RUN npm run build
 
 # Stage 2: Build Server (Go)
-FROM golang:1.20 AS server-builder
+FROM golang:1.22.5 AS server-builder
 WORKDIR /app
 COPY ./Server/go.mod ./Server/go.sum ./
 RUN go mod download
