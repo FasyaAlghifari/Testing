@@ -1,6 +1,6 @@
 # Stage 1: Build Client (React)
 FROM node:18 AS client-builder
-WORKDIR /app/Client
+WORKDIR /app
 COPY ./Client/package*.json ./
 RUN npm install
 COPY ./Client/ ./
@@ -19,6 +19,6 @@ FROM alpine:latest
 WORKDIR /app
 RUN apk --no-cache add ca-certificates
 COPY --from=server-builder /app/server ./
-COPY --from=client-builder /app/Client/build ./client
+COPY --from=client-builder /app/dist ./client
 EXPOSE 8080
 CMD ["./server"]
