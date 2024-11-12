@@ -1,6 +1,12 @@
 # Stage 1: Build Client (React)
 FROM node:18 AS client-builder
 WORKDIR /app
+
+# Tambahkan ARG untuk menerima nilai saat build
+ARG VITE_API_URL
+# Set sebagai environment variable
+ENV VITE_API_URL=$VITE_API_URL
+
 COPY ./Client/package*.json ./
 RUN npm install
 COPY ./Client/ ./
