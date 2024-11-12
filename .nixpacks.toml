@@ -1,5 +1,9 @@
 [phases]
 
+  [phases.setup]
+  # Menambahkan setup phase untuk memastikan environment yang benar
+  nixPkgs = ["nodejs", "go"]
+
   # Phase untuk build Client (React)
   [phases.client-install]
   description = "Install dependencies for the client"
@@ -18,7 +22,7 @@
   description = "Build the server"
   run = "go build -o server ./Server"
 
-[run]
+[start]
 
   # Jalankan server dengan output binary yang sudah di-build
-  start = "./server"
+  cmd = "./server"
